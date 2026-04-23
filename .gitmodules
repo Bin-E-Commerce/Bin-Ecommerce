@@ -1,0 +1,3 @@
+[submodule "web"]
+	path = web
+	url = https://github.com/Bin-E-Commerce/Bin-E-Commerce-UI-Web.git

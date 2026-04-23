@@ -1,0 +1,42 @@
+# ─── AI / Agent tooling ─────────────────────────────────────────
+.agents/
+.trae/
+skills-lock.json
+.github/agents/
+.github/copilot-instructions.md
+
+# ─── Dependencies ────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ─── Build outputs ───────────────────────────────────────────────
+dist/
+build/
+.next/
+.turbo/
+out/
+
+# ─── Environment variables ───────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ─── Logs ────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+
+# ─── Testing ─────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── OS & Editor ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+*.suo
+*.user
+
+# ─── Docker ──────────────────────────────────────────────────────
+.dockerignore
