@@ -9,7 +9,7 @@
 [![Node](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![NestJS](https://img.shields.io/badge/NestJS-10-E0234E?logo=nestjs&logoColor=white)](https://nestjs.com)
-[![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=next.js&logoColor=white)](https://nextjs.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)](https://nextjs.org)
 
 > Designed around **domain-driven design**, **event-driven communication**, and **cost-efficient cloud deployment** — running 10 independent microservices on a $10/month AWS infrastructure.
 
@@ -38,7 +38,7 @@ Bin E-Commerce is a full-stack e-commerce system that covers the complete shoppi
 
 | Layer               | Technology                                        | Rationale                                                     |
 | ------------------- | ------------------------------------------------- | ------------------------------------------------------------- |
-| **Frontend**        | Next.js 14 · TypeScript · Tailwind CSS            | SSR + ISR for SEO-critical product pages                      |
+| **Frontend**        | Next.js 16 · TypeScript · Tailwind CSS            | SSR + ISR for SEO-critical product pages                      |
 | **Backend**         | NestJS 10 (×10 services)                          | Decorator-driven, built-in DI, TypeScript-first               |
 | **API Gateway**     | NestJS + `@nestjs/axios` proxy                    | Single entry point, JWT validation, rate limiting             |
 | **Identity**        | Keycloak 24 (OIDC / OAuth2)                       | Industry-standard IdP, social login, RBAC out of the box      |
@@ -58,7 +58,7 @@ Bin E-Commerce is a full-stack e-commerce system that covers the complete shoppi
 
 ```
 bin-ecommerce/
-├── web/                        # Next.js 14 frontend (git submodule)
+├── web/                        # Next.js 16 frontend (git submodule)
 │   ├── src/app/                # App Router — route groups: (public), (user), (admin), (auth)
 │   ├── src/components/         # Reusable UI components
 │   ├── src/services/           # Typed API client layer (per domain)
@@ -118,7 +118,7 @@ bin-ecommerce/
 ```
                          ┌─────────────────────────────────────────┐
   Browser / Mobile       │              Vercel (CDN + Edge)         │
-  ─────────────────────► │         Next.js 14  (web/)               │
+  ─────────────────────► │         Next.js 16  (web/)               │
                          └────────────────┬────────────────────────┘
                                           │ HTTPS
                          ┌────────────────▼────────────────────────┐
@@ -311,7 +311,7 @@ Detailed domain design documents are in [`doc/domain/`](doc/domain/):
 | Repository                                                                       | Description                                               |
 | -------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | [Bin-Ecommerce](https://github.com/Bin-E-Commerce/Bin-Ecommerce)                 | This repo — monorepo (services, packages, infra)          |
-| [Bin-E-Commerce-UI-Web](https://github.com/Bin-E-Commerce/Bin-E-Commerce-UI-Web) | Next.js 14 frontend (included as git submodule in `web/`) |
+| [Bin-E-Commerce-UI-Web](https://github.com/Bin-E-Commerce/Bin-E-Commerce-UI-Web) | Next.js 16 frontend (included as git submodule in `web/`) |
 
 ---
 
