@@ -1,0 +1,31 @@
+{
+  "name": "bin-ecommerce",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "infra:up": "docker compose -f infra/docker/docker-compose.infra.yml up -d",
+    "infra:down": "docker compose -f infra/docker/docker-compose.infra.yml down",
+    "infra:logs": "docker compose -f infra/docker/docker-compose.infra.yml logs -f",
+    "services:up": "docker compose up -d",
+    "services:down": "docker compose down",
+    "services:build": "docker compose build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "eslint": "^10.2.1",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

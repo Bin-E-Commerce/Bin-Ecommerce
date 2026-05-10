@@ -1,0 +1,65 @@
+# Dùng để cấu hình Prometheus, một hệ thống giám sát và cảnh báo mã nguồn mở. Cấu hình này định nghĩa cách Prometheus thu thập dữ liệu từ các dịch vụ khác nhau trong hệ thống của bạn.
+
+# global: Chứa các cấu hình chung áp dụng cho tất cả các job scrape.
+# Ở đây, chúng ta định nghĩa khoảng thời gian để Prometheus thu thập dữ liệu (scrape_interval) và đánh giá các quy tắc cảnh báo (evaluation_interval).
+# Cứ mỗi 15 giây, Prometheus sẽ đi vòng quanh các dịch vụ một lần để "kéo" (scrape) dữ liệu mới về.
+# Cứ mỗi 15 giây, Prometheus sẽ đánh giá lại tất cả các quy tắc cảnh báo (alerting rules) để xem có cảnh báo nào cần được kích hoạt hay không.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# scrape_configs: Đây là phần quan trọng nhất của cấu hình, nơi bạn định nghĩa các "job" mà Prometheus sẽ theo dõi. Mỗi job đại diện cho một nhóm các endpoint mà Prometheus sẽ thu thập dữ liệu.
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: [localhost:9090]
+
+  - job_name: api-gateway
+    static_configs:
+      - targets: [api-gateway:3000]
+    metrics_path: /metrics
+
+  - job_name: auth-service
+    static_configs:
+      - targets: [auth-service:3001]
+    metrics_path: /metrics
+
+  - job_name: product-service
+    static_configs:
+      - targets: [product-service:3002]
+    metrics_path: /metrics
+
+  - job_name: cart-service
+    static_configs:
+      - targets: [cart-service:3003]
+    metrics_path: /metrics
+
+  - job_name: order-service
+    static_configs:
+      - targets: [order-service:3004]
+    metrics_path: /metrics
+
+  - job_name: inventory-service
+    static_configs:
+      - targets: [inventory-service:3005]
+    metrics_path: /metrics
+
+  - job_name: notification-service
+    static_configs:
+      - targets: [notification-service:3006]
+    metrics_path: /metrics
+
+  - job_name: shipping-service
+    static_configs:
+      - targets: [shipping-service:3007]
+    metrics_path: /metrics
+
+  - job_name: promotion-service
+    static_configs:
+      - targets: [promotion-service:3008]
+    metrics_path: /metrics
+
+  - job_name: return-service
+    static_configs:
+      - targets: [return-service:3009]
+    metrics_path: /metrics

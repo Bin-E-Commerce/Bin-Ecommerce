@@ -6,7 +6,7 @@
 	url = https://github.com/Bin-E-Commerce/Bin-E-Commerce-APIGateway.git
 [submodule "services/notification-service"]
 	path = services/notification-service
-	url = https://github.com/Bin-E-Commerce/Bin-Ecommerce-Notification-Service.git
+	url = https://github.com/Bin-E-Commerce/Bin-E-Commerce-Notification-Service.git
 [submodule "services/auth-service"]
 	path = services/auth-service
 	url = https://github.com/Bin-E-Commerce/Bin-E-Commerce-Auth-Service.git

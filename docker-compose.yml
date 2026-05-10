@@ -1,0 +1,300 @@
+version: "3.9"
+
+# This compose file runs ALL 10 NestJS services + Nginx.
+# Infra (Postgres, Mongo, Redis, Kafka, Keycloak) must be started separately:
+#   docker compose -f infra/docker/docker-compose.infra.yml up -d
+
+networks:
+  bin_infra_net:
+    external: true # shared with infra compose
+  bin_app_net:
+    driver: bridge
+
+x-service-defaults: &service-defaults
+  restart: unless-stopped
+  env_file: .env
+  networks:
+    - bin_infra_net
+    - bin_app_net
+  deploy:
+    resources:
+      limits:
+        memory: 150m # 100m heap + 50m headroom
+      reservations:
+        memory: 64m
+
+services:
+  # ── API Gateway ─────────────────────────────────────────────────────────────
+  api-gateway:
+    <<: *service-defaults
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    image: bin-ecommerce/api-gateway:local
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: bin-ecommerce
+      AUTH_SERVICE_URL: http://auth-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      CART_SERVICE_URL: http://cart-service:3003
+      ORDER_SERVICE_URL: http://order-service:3004
+      INVENTORY_SERVICE_URL: http://inventory-service:3005
+      NOTIFICATION_SERVICE_URL: http://notification-service:3006
+      SHIPPING_SERVICE_URL: http://shipping-service:3007
+      PROMOTION_SERVICE_URL: http://promotion-service:3008
+      RETURN_SERVICE_URL: http://return-service:3009
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
+    depends_on:
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Auth Service ─────────────────────────────────────────────────────────────
+  auth-service:
+    <<: *service-defaults
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    image: bin-ecommerce/auth-service:local
+    container_name: auth-service
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: bin_auth
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: bin-ecommerce
+      KEYCLOAK_CLIENT_ID: api-gateway
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      KAFKA_BROKERS: kafka:9092
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Product Service ──────────────────────────────────────────────────────────
+  # product-service:
+  #   <<: *service-defaults
+  #   build:
+  #     context: .
+  #     dockerfile: services/product-service/Dockerfile
+  #   image: bin-ecommerce/product-service:local
+  #   container_name: product-service
+  #   environment:
+  #     PORT: 3002
+  #     NODE_ENV: development
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: bin_product
+  #     MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongo:27017/bin_product?authSource=admin
+  #     KAFKA_BROKERS: kafka:9092
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:3002/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+
+  # # ── Cart Service ─────────────────────────────────────────────────────────────
+  # cart-service:
+  #   <<: *service-defaults
+  #   build:
+  #     context: .
+  #     dockerfile: services/cart-service/Dockerfile
+  #   image: bin-ecommerce/cart-service:local
+  #   container_name: cart-service
+  #   environment:
+  #     PORT: 3003
+  #     NODE_ENV: development
+  #     MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongo:27017/bin_cart?authSource=admin
+  #     REDIS_URL: redis://redis:6379
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:3003/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+
+  # # ── Order Service ─────────────────────────────────────────────────────────────
+  # order-service:
+  #   <<: *service-defaults
+  #   build:
+  #     context: .
+  #     dockerfile: services/order-service/Dockerfile
+  #   image: bin-ecommerce/order-service:local
+  #   container_name: order-service
+  #   environment:
+  #     PORT: 3004
+  #     NODE_ENV: development
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: bin_order
+  #     KAFKA_BROKERS: kafka:9092
+  #     CAMUNDA_ZEEBE_ADDRESS: ${CAMUNDA_ZEEBE_ADDRESS}
+  #     CAMUNDA_CLIENT_ID: ${CAMUNDA_CLIENT_ID}
+  #     CAMUNDA_CLIENT_SECRET: ${CAMUNDA_CLIENT_SECRET}
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:3004/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+
+  # # ── Inventory Service ─────────────────────────────────────────────────────────
+  # inventory-service:
+  #   <<: *service-defaults
+  #   build:
+  #     context: .
+  #     dockerfile: services/inventory-service/Dockerfile
+  #   image: bin-ecommerce/inventory-service:local
+  #   container_name: inventory-service
+  #   environment:
+  #     PORT: 3005
+  #     NODE_ENV: development
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: bin_inventory
+  #     KAFKA_BROKERS: kafka:9092
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:3005/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+
+  # # ── Notification Service ──────────────────────────────────────────────────────
+  # notification-service:
+  #   <<: *service-defaults
+  #   build:
+  #     context: .
+  #     dockerfile: services/notification-service/Dockerfile
+  #   image: bin-ecommerce/notification-service:local
+  #   container_name: notification-service
+  #   environment:
+  #     PORT: 3006
+  #     NODE_ENV: development
+  #     MONGODB_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongo:27017/bin_notification?authSource=admin
+  #     KAFKA_BROKERS: kafka:9092
+  #     SMTP_HOST: ${SMTP_HOST}
+  #     SMTP_PORT: ${SMTP_PORT}
+  #     SMTP_USER: ${SMTP_USER}
+  #     SMTP_PASSWORD: ${SMTP_PASSWORD}
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:3006/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+
+  # # ── Shipping Service ──────────────────────────────────────────────────────────
+  # shipping-service:
+  #   <<: *service-defaults
+  #   build:
+  #     context: .
+  #     dockerfile: services/shipping-service/Dockerfile
+  #   image: bin-ecommerce/shipping-service:local
+  #   container_name: shipping-service
+  #   environment:
+  #     PORT: 3007
+  #     NODE_ENV: development
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: bin_shipping
+  #     KAFKA_BROKERS: kafka:9092
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:3007/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+
+  # # ── Promotion Service ─────────────────────────────────────────────────────────
+  # promotion-service:
+  #   <<: *service-defaults
+  #   build:
+  #     context: .
+  #     dockerfile: services/promotion-service/Dockerfile
+  #   image: bin-ecommerce/promotion-service:local
+  #   container_name: promotion-service
+  #   environment:
+  #     PORT: 3008
+  #     NODE_ENV: development
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: bin_promotion
+  #     KAFKA_BROKERS: kafka:9092
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:3008/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+
+  # # ── Return Service ────────────────────────────────────────────────────────────
+  # return-service:
+  #   <<: *service-defaults
+  #   build:
+  #     context: .
+  #     dockerfile: services/return-service/Dockerfile
+  #   image: bin-ecommerce/return-service:local
+  #   container_name: return-service
+  #   environment:
+  #     PORT: 3009
+  #     NODE_ENV: development
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: bin_return
+  #     KAFKA_BROKERS: kafka:9092
+  #     CAMUNDA_ZEEBE_ADDRESS: ${CAMUNDA_ZEEBE_ADDRESS}
+  #     CAMUNDA_CLIENT_ID: ${CAMUNDA_CLIENT_ID}
+  #     CAMUNDA_CLIENT_SECRET: ${CAMUNDA_CLIENT_SECRET}
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:3009/api/health"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+
+  # ── Nginx Reverse Proxy: Bảo vệ các service phía sau, xử lý SSL termination, CORS, rate limiting, v.v. ──────────────────────────────────────────────────────────────
+  # Lý do dùng Nginx: Thay vì expose tất cả các service trực tiếp ra ngoài, chúng ta chỉ expose Nginx trên cổng 80/443.
+  # Nginx sẽ làm nhiệm vụ reverse proxy, nhận request từ client và forward đến API Gateway hoặc các service khác dựa trên cấu hình.
+  # Điều này giúp tăng cường bảo mật (chỉ có một điểm vào), dễ dàng quản lý SSL, và có thể thêm các tính năng như rate limiting, caching, v.v. nếu cần trong tương lai.
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./infra/nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - bin_app_net
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

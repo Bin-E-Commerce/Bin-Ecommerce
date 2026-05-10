@@ -40,3 +40,7 @@ Thumbs.db
 
 # ─── Docker ──────────────────────────────────────────────────────
 .dockerignore
+
+
+# ─── Keycloak ──────────────────────────────────────────────────────
+infra/keycloak/realm-export.json
