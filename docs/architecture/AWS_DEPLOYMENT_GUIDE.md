@@ -145,7 +145,7 @@ curl http://localhost:3006/api/health
 
 ### 2.3. Lưu ý về Nginx hiện tại
 
-File `infra/nginx/conf.d/default.conf` hiện đang có nhiều comment kiểu `//`. Nginx chuẩn dùng `#` cho comment, không dùng `//`.
+File `infra/nginx/conf.d/default.conf` đã dùng comment chuẩn `#`. Trước khi deploy thật, vẫn nên kiểm tra syntax Nginx để bắt lỗi cấu hình, upstream hoặc certificate.
 
 Trước khi deploy thật, hãy kiểm tra:
 
@@ -155,7 +155,6 @@ docker logs nginx
 docker exec nginx nginx -t
 ```
 
-Nếu thấy lỗi syntax do `//`, cần sửa các comment `// ...` thành `# ...`.
 
 Ngoài ra, app có global prefix `api`, nên health endpoint thật của API Gateway là:
 
