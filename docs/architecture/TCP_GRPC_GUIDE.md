@@ -197,7 +197,6 @@ Cần gọi service khác synchronously?
 | order → inventory (check stock)     | **TCP**                                 | Đơn giản, payload nhỏ |
 | order → product (get price)         | **TCP**                                 | Đơn giản              |
 | gateway → auth (verify user nội bộ) | **Không dùng** — dùng X-User-\* headers |                       |
-| product → search index sync         | **gRPC streaming**                      | Danh sách lớn         |
-| Tất cả event-driven workflows       | **Kafka** (xem file riêng)              | Async, decoupled      |
+| product → search index sync         | **gRxfka** (xem file riêng)             | Async, decoupled      |
 
 > **Lưu ý với hệ thống hiện tại**: Đang dùng HTTP proxy qua api-gateway. TCP/gRPC chỉ nên thêm vào khi có nhu cầu **service-to-service** trực tiếp mà không qua gateway.

@@ -6,12 +6,12 @@ This guide helps a new developer clone the main repository, initialize submodule
 
 Install these tools first:
 
-| Tool | Required Version | Notes |
-| --- | --- | --- |
-| Git | latest stable | Needed for the main repo and submodules |
-| Node.js | `>= 20` | Root `package.json` requires Node 20+ |
-| npm | `>= 10` | Used by root workspace and submodules |
-| Docker Desktop | latest stable | Needed for infrastructure and service containers |
+| Tool           | Required Version | Notes                                            |
+| -------------- | ---------------- | ------------------------------------------------ |
+| Git            | latest stable    | Needed for the main repo and submodules          |
+| Node.js        | `>= 20`          | Root `package.json` requires Node 20+            |
+| npm            | `>= 10`          | Used by root workspace and submodules            |
+| Docker Desktop | latest stable    | Needed for infrastructure and service containers |
 
 If the repositories are private, make sure your GitHub account has access to the `Bin-E-Commerce` organization before cloning.
 
@@ -20,7 +20,7 @@ If the repositories are private, make sure your GitHub account has access to the
 Recommended command:
 
 ```bash
-git clone --recurse-submodules https://github.com/Bin-E-Commerce/E-commerce.git
+git clone --recurse-submodules https://github.com/Bin-E-Commerce/Bin-E-Commerce.git
 cd E-commerce
 ```
 
@@ -41,11 +41,11 @@ git submodule update --init --recursive
 
 The main repository uses Git submodules for independently versioned apps/services.
 
-| Path | Repository |
-| --- | --- |
-| `web` | `https://github.com/Bin-E-Commerce/Bin-E-Commerce-UI-Web.git` |
-| `services/api-gateway` | `https://github.com/Bin-E-Commerce/Bin-E-Commerce-APIGateway.git` |
-| `services/auth-service` | `https://github.com/Bin-E-Commerce/Bin-E-Commerce-Auth-Service.git` |
+| Path                            | Repository                                                                  |
+| ------------------------------- | --------------------------------------------------------------------------- |
+| `web`                           | `https://github.com/Bin-E-Commerce/Bin-E-Commerce-UI-Web.git`               |
+| `services/api-gateway`          | `https://github.com/Bin-E-Commerce/Bin-E-Commerce-APIGateway.git`           |
+| `services/auth-service`         | `https://github.com/Bin-E-Commerce/Bin-E-Commerce-Auth-Service.git`         |
 | `services/notification-service` | `https://github.com/Bin-E-Commerce/Bin-E-Commerce-Notification-Service.git` |
 
 To pull latest code inside every submodule:
@@ -219,12 +219,12 @@ npm run dev
 
 Default ports:
 
-| Service | Port | Health Check |
-| --- | --- | --- |
-| API Gateway | `3000` | `http://localhost:3000/api/health` |
-| Auth Service | `3001` | `http://localhost:3001/api/health` |
+| Service              | Port   | Health Check                       |
+| -------------------- | ------ | ---------------------------------- |
+| API Gateway          | `3000` | `http://localhost:3000/api/health` |
+| Auth Service         | `3001` | `http://localhost:3001/api/health` |
 | Notification Service | `3006` | `http://localhost:3006/api/health` |
-| Web | `5173` | `http://localhost:5173` |
+| Web                  | `5173` | `http://localhost:5173`            |
 
 ## 10. Run the Web App
 
